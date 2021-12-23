@@ -1,5 +1,8 @@
 FROM node:8-jessie
 
+# fix untrusted certificate
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+
 RUN mkdir -p /app && \
     apt-get update && \
     apt-get install -y dos2unix && \
