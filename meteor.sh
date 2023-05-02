@@ -1,23 +1,16 @@
 #!/bin/sh
 
-# This is the Meteor install script!
+# This is the Meteor alternative install script!
 #
-# Are you looking at this in your web browser, and would like to install Meteor?
+# The official installation is using:
+#     npm install -g meteor.
 #
-# MAC AND LINUX:
-#   Just open up your terminal and type:
+# Read more https://www.meteor.com/developers/install
 #
+# To install using this alternative method run on Mac or Linux:
 #     curl https://install.meteor.com/ | sh
 #
-#   Meteor currently supports:
-#    - Mac: OS X 10.7 and above
-#    - Linux: x86 and x86_64 systems
-#
-# WINDOWS:
-#   Download the Windows installer from https://install.meteor.com/windows
-#
-#   Meteor currently supports Windows 7, Windows 8.1, Windows Server 2008,
-#   and Windows Server 2012.
+#   Meteor currently supports this alternative method on Mac and Linux
 
 # We wrap this whole script in a function, so that we won't execute
 # until the entire script is downloaded.
@@ -40,7 +33,6 @@ RELEASE="1.5.2.2"
 ## example.
 
 PREFIX="/usr/local"
-export METEOR_ALLOW_SUPERUSER=true
 
 set -e
 set -u
@@ -52,25 +44,20 @@ exec 1>&2
 UNAME=$(uname)
 # Check to see if it starts with MINGW.
 if [ "$UNAME" ">" "MINGW" -a "$UNAME" "<" "MINGX" ] ; then
-    echo "To install Meteor on Windows, download the installer from:"
-    echo "https://install.meteor.com/windows"
+    echo "To install Meteor on Windows, use the npm installer"
+    echo "https://www.meteor.com/developers/install"
     exit 1
 fi
 if [ "$UNAME" != "Linux" -a "$UNAME" != "Darwin" ] ; then
     echo "Sorry, this OS is not supported yet via this installer."
-    echo "For more details on supported platforms, see https://www.meteor.com/install"
+    echo "For more details on supported platforms, see https://www.meteor.com/developers/install"
     exit 1
 fi
 
 
 if [ "$UNAME" = "Darwin" ] ; then
   ### OSX ###
-  if [ "i386" != "$(uname -p)" -o "1" != "$(sysctl -n hw.cpu64bit_capable 2>/dev/null || echo 0)" ] ; then
-    # Can't just test uname -m = x86_64, because Snow Leopard can
-    # return other values.
-    echo "Only 64-bit Intel processors are supported at this time."
-    exit 1
-  fi
+  ARCH_NAME="$(uname -m)"
 
   # Running a version of Meteor older than 0.6.0 (April 2013)?
   if grep BUNDLE_VERSION /usr/local/bin/meteor >/dev/null 2>&1 ; then
@@ -83,17 +70,19 @@ if [ "$UNAME" = "Darwin" ] ; then
     exit 1
   fi
 
-  PLATFORM="os.osx.x86_64"
+  if [ "$ARCH_NAME" == "arm64" ] ; then
+    PLATFORM="os.osx.arm64"
+  else
+    PLATFORM="os.osx.x86_64"
+  fi
 elif [ "$UNAME" = "Linux" ] ; then
   ### Linux ###
   LINUX_ARCH=$(uname -m)
-  if [ "${LINUX_ARCH}" = "i686" ] ; then
-    PLATFORM="os.linux.x86_32"
-  elif [ "${LINUX_ARCH}" = "x86_64" ] ; then
+  if [ "${LINUX_ARCH}" = "x86_64" ] ; then
     PLATFORM="os.linux.x86_64"
   else
     echo "Unusable architecture: ${LINUX_ARCH}"
-    echo "Meteor only supports i686 and x86_64 for now."
+    echo "Meteor only supports x86_64 for now."
     exit 1
   fi
 
@@ -133,7 +122,7 @@ if [ -e "$HOME/.meteor" ]; then
   rm -rf "$HOME/.meteor"
 fi
 
-TARBALL_URL="https://static-meteor.netdna-ssl.com/packages-bootstrap/${RELEASE}/meteor-bootstrap-${PLATFORM}.tar.gz"
+TARBALL_URL="https://static.meteor.com/packages-bootstrap/${RELEASE}/meteor-bootstrap-${PLATFORM}.tar.gz"
 INSTALL_TMPDIR="$HOME/.meteor-install-tmp"
 TARBALL_FILE="$HOME/.meteor-tarball-tmp"
 
@@ -182,7 +171,7 @@ set -e
 
 # bomb out if it didn't work, eg no net
 test -e "${TARBALL_FILE}"
-bsdtar -xzf "$TARBALL_FILE" -C "$INSTALL_TMPDIR" -o
+tar -xzf "$TARBALL_FILE" -C "$INSTALL_TMPDIR" -o
 
 test -x "${INSTALL_TMPDIR}/.meteor/meteor"
 mv "${INSTALL_TMPDIR}/.meteor" "$HOME"
@@ -214,6 +203,10 @@ Or see the docs at:
 
   docs.meteor.com
 
+Deploy and host your app with Cloud:
+
+  www.meteor.com/cloud
+
 EOF
 elif type sudo >/dev/null 2>&1; then
   echo "Writing a launcher script to $PREFIX/bin/meteor for your convenience."
@@ -241,6 +234,10 @@ To get started fast:
 Or see the docs at:
 
   docs.meteor.com
+
+Deploy and host your app with Cloud:
+
+  www.meteor.com/cloud
 
 EOF
   else
