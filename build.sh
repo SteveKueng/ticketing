@@ -22,8 +22,8 @@ if [ -e "${METEOR_DIR}" ]; then
 
    echo "installing meteor build dependency"
    meteor npm install --save babel-runtime
-    meteor npm install --global downloadjs
-    meteor npm install --save downloadjs
+   meteor npm install --global downloadjs
+   meteor npm install --save downloadjs
 
    # Bundle the Meteor app
    echo "Building the bundle...(this may take a while)"
