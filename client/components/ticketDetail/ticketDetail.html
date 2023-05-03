@@ -1,16 +1,16 @@
 <template name="ticketDetail">
-    <div class="ticket-detail col-xs-10 col-xs-offset-1">
+    <div class="ticket-detail">
         {{>backButton}}
         <div class="row">
-            <div class="col-xs-12">
-                <h1>Details
+            <div class="col-xs-6">
+                <h2>Details
                     <small>erfasst von: {{ticket.creator}}</small>
-                </h1>
+                </h2>
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12">
-                <h2>Koordinaten</h2>
+            <div class="col-xs-6">
+                <h3>Koordinaten</h3>
             </div>
         </div>
         <div class="row">
@@ -53,7 +53,7 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <h2>Beschreibung</h2>
+                <h3>Beschreibung</h3>
             </div>
         </div>
         <div class="row">
@@ -66,7 +66,7 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <h2>Aktionen <span class="badge">{{ticket.actions.length}}</span></h2>
+                <h3>Aktionen <span class="badge">{{ticket.actions.length}}</span></h3>
             </div>
         </div>
         <div class="row">
@@ -173,7 +173,6 @@
     <div class="col-xs-12 space-top">
         <div class="row ">
             <div class="col-xs-12">
-
                 <button class="btn btn-default" data-toggle="modal" data-target="#editTicket" id="editTicketBtn">Ticket bearbeiten
                     </button>
             </div>
@@ -219,6 +218,7 @@
 
 <template name="ticketAction">
     <div class="ticket-action col-xs-12">
+        <hr>
         <p class="action-info">{{formatDate created}} - {{editor}}</p>
         <p>{{text}}</p>
     </div>
