@@ -1,5 +1,5 @@
 <template name="operations">
-    <div class="level-table col-xs-10 col-xs-offset-1">
+    <div class="level-table">
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-md-6">
                 <div class="input-group">
@@ -19,12 +19,38 @@
                 </select>
             </div>
         </div>
+        <hr>
+    
+        <div class="row">            
+            <div class="col-xs-12 col-sm-6 col-md-6">
+                <h3>Bündeltabelle</h3>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-6">
+                <select class="form-control filter-element" required title="Filter für Bündeltabelle" id="bundleShowNumberElements">
+                    <option value="3"> 3 Bündel anzeigen</option>
+                    <option value="5"> 5 Bündel anzeigen</option>
+                    <option value="10"> 10 Bündel anzeigen </option>
+                    <option value=""> Alle Bündel anzeigen</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12">
+                <div class="btn-group add-btn pull-right">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#newLevel">Neuer Pegelwert</button>
+                    <a href="#" id="downloadBundleHistory" class="btn btn-default pull-right">
+                    <span class="glyphicon glyphicon-cloud-download"></span> Journal herunterladen</a>
+                </div>
+            </div>
+        </div>
+        {{>bundleList}}  {{>editBundleStatus}} {{>newBundleLevel}}
 
+        <hr>
         <div class="row">
             <div class="col-sm-6 hidden-xs">
                 <div class="row">
                     <div class="col-sm-6 hidden-xs">
-                        <h2>Standortübersicht</h2>
+                        <h3>Standortübersicht</h3>
                     </div>
                     <div class="col-sm-6 hidden-xs">
                         <select class="form-control filter-element" required title="Filter für Standortübersicht" id="locationShowNumberElements">
@@ -37,7 +63,7 @@
                 </div>
             </div>
             <div class="col-xs-12 visible-xs">
-                <h3>Standortübersicht</h3>
+                <h4>Standortübersicht</h4>
             </div>
             <div class="col-xs-12 visible-xs">
                 <select class="form-control filter-element" required title="Filter für Standortübersicht" id="locationShowNumberElements">
@@ -49,49 +75,9 @@
             </div>
             <div class="col-xs-12  col-sm-6">
                 <a href="#" id="downloadLocationHistory" class="add-btn btn btn-default pull-right">
-                    <span class="glyphicon glyphicon-cloud-download"></span> Journal herunterladen</a>
+                <span class="glyphicon glyphicon-cloud-download"></span> Journal herunterladen</a>
             </div>
-
             {{>locationList}} {{>editLocationStatus}}
-        </div>
-        <div class="row">
-            <div class="col-sm-6 hidden-xs">
-                <div class="row">
-                    <div class="col-sm-6 hidden-xs">
-                        <h2>Bündeltabelle</h2>
-                    </div>
-                    <div class="col-sm-6 hidden-xs ">
-                        <select class="form-control filter-element" required title="Filter für Bündeltabelle" id="bundleShowNumberElements">
-                            <option value="3"> 3 Bündel anzeigen</option>
-                            <option value="5"> 5 Bündel anzeigen</option>
-                            <option value="10"> 10 Bündel anzeigen </option>
-                            <option value=""> Alle Bündel anzeigen</option>
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-xs-6 visible-xs">
-                <h3 style="vertical-align: middle">Bündeltabelle</h3>
-            </div>
-            <div class="col-xs-12 visible-xs">
-                <select class="form-control filter-element" required title="Filter für Bündeltabelle" id="bundleShowNumberElements">
-                    <option value="3"> 3 Bündel anzeigen</option>
-                    <option value="5"> 5 Bündel anzeigen</option>
-                    <option value="10"> 10 Bündel anzeigen </option>
-                    <option value=""> Alle Bündel anzeigen</option>
-                </select>
-            </div>
-
-            <div class="col-xs-12 col-sm-6">
-                <div class="btn-group add-btn pull-right">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#newLevel">Neuer Pegelwert</button>
-                    <a href="#" id="downloadBundleHistory" class="btn btn-default pull-right">
-                        <span class="glyphicon glyphicon-cloud-download"></span> Journal herunterladen</a>
-                </div>
-            </div>
-
-        </div>
-     {{>bundleList}}  {{>editBundleStatus}} {{>newBundleLevel}}
+        </div> 
     </div>
 </template>

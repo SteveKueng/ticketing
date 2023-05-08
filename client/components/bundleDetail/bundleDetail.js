@@ -32,12 +32,18 @@ Template.bundleDetail.onRendered(function () {
             yAxes: [{
                 scaleLabel: {
                     display: true,
-                    labelString: 'Kanaldämpfung [dB]'
+                    labelString: 'Aligning [dB]'
                 },
                 ticks: {
                     max: 0,
-                    min: -100,
-                    stepSize: 10
+                    min: -99,
+                    stepSize: 5
+                }
+            }],
+            xAxes: [{
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Tage'
                 }
             }]
         }
@@ -47,7 +53,7 @@ Template.bundleDetail.onRendered(function () {
         labels: new Array(points),
         datasets: [
             {
-                label: 'Max. Kanaldämpfung',
+                label: 'Aliging gem Ristl Befehl',
                 fill: false,
                 lineTension: 0,
                 backgroundColor: 'rgba(255,87,56,0.4)',
@@ -58,7 +64,7 @@ Template.bundleDetail.onRendered(function () {
                 pointHoverBorderWidth: 0,
                 pointRadius: 0,
                 pointHitRadius: 0,
-                data: Array.from({ length: points }, o => bundle.minValue)
+                data: Array.from({ length: points }, o => bundle.minValue + 22)
             },
             {
                 label: getDirName(bundle, 'AtoB'),
@@ -132,11 +138,26 @@ Template.bundleDetail.helpers({
     getDampingList: function (bundle){
         return getDampingMatches(bundle);
     },
+    getLatestDamping: function (bundle, direction) {
+        var measurementMatches = [];
+        measurementMatches = getDampingMatches(bundle);
+        if (measurementMatches){
+            if (direction === "AtoB") {                 
+                return `${measurementMatches[0].AtoBDamping}`;
+            } else {
+                return `${measurementMatches[0].BtoADamping}`;
+            }
+        }
+        
+    },
     getAverageDate: function (dateA, dateB){
         return formatDate(getAverageDate(dateA, dateB).averageDate);
     },
     getDeltaHours: function (dateA, dateB){
         return getAverageDate(dateA, dateB).deltaHours;
+    },
+    getAligning: function (minValue){
+        return getAligning(minValue);
     },
     formatDate: function (date) {
         return formatDate(date);
@@ -147,6 +168,13 @@ Template.bundleDetail.helpers({
             .sort((a, b) => moment(b.date) - moment(a.date));
     
         return measurements;
+    },
+    getLatestMasurementForLocation: function(bundle, location, value) {
+        var measurements = bundle.measurements            
+            .filter(o => o.location === location)
+            .sort((a, b) => moment(b.date) - moment(a.date));
+        console.log(measurements[0])
+        return measurements[0][value]
     }
 });
 
@@ -159,4 +187,8 @@ function getDirName(bundle, direction) {
 }
 function formatDate (date){
     return moment(date).format('DD.MM.YY HH:mm');
+}
+
+function getAligning(minValue){
+    return minValue + 22
 }

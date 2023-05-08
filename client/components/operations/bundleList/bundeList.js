@@ -195,7 +195,10 @@ Template.bundleRow.helpers({
     getActiveEstablishment: (bundle) => {
         Template.instance().lastCheck.get();
         return getActiveEstablishment(bundle);
-    }
+    },
+    getAligning: function (minValue){
+        return getAligning(minValue);
+    },
 });
 
 Template.newBundleLevel.onCreated(function () {
@@ -244,20 +247,23 @@ Template.newBundleLevel.events({
 
         var bundle = template.selectedBundle.get(),
             selectedDate = convertDateToIsoString(template.$('#bundleDate').val()),
-            locationSelection = template.$('input:radio[name=location]:checked').val(),
-            txValue = parseInt(template.$('#txValue').val());
-            rxValue = parseInt(template.$('#rxValue').val());
+            //locationSelection = template.$('input:radio[name=location]:checked').val(),
+            txValueA = parseInt(template.$('#txValueA').val());
+            rxValueA = parseInt(template.$('#rxValueA').val());
+            txValueB = parseInt(template.$('#txValueB').val());
+            rxValueB = parseInt(template.$('#rxValueB').val());
         save = true;
 
-        if (!txValue || !rxValue ){
+        if (!txValueA || !rxValueA || !rxValueB || !rxValueB ){
             return notificationArea.error("Bitte RX/TX Werte eingeben", true);
         }
-        if (!locationSelection){
-            return notificationArea.error("Bitte Standort auswählen", true);
+
+        if (txValueA > 22 || txValueA < -22 || txValueB > 22 || txValueB < -22){
+            return notificationArea.error("TX Wert muss zwischen +22 und -22 sein.", true);
         }
 
-        if (rxValue > 22 || rxValue < -99 || txValue > 22 || txValue < -99){
-            return notificationArea.error("RX/TX Werte müssen zwischen +22 und -99 sein.", true);
+        if (rxValueA > -20 || rxValueA < -99 || rxValueB > -20 || rxValueB < -99){
+            return notificationArea.error("RX Wert muss zwischen -20 und -99 sein.", true);
         }
 
 
@@ -269,25 +275,44 @@ Template.newBundleLevel.events({
             return;
         }
   
-
         Bundles.update({ _id: bundle._id }, {
             $push: {
                 measurements: {
                     id: Random.id(),
                     date: selectedDate,
-                    location: locationSelection === "A" ? bundle.locationA : bundle.locationB,
-                    rxValue: rxValue,
-                    txValue: txValue
+                    location: bundle.locationA,
+                    rxValue: rxValueA,
+                    txValue: txValueA
                 }
             }
         }, function (err) {
             if (err) {
                 return notificationArea.error("Es ist ein Fehler aufgetreten.", true);
             }
-            notificationArea.success("Wert gespeichert.");
-            template.selectedBundle.set();
-            template.$('.modal').modal('hide');
+
+            Bundles.update({ _id: bundle._id }, {
+                $push: {
+                    measurements: {
+                        id: Random.id(),
+                        date: selectedDate,
+                        location: bundle.locationB,
+                        rxValue: rxValueB,
+                        txValue: txValueB
+                    }
+                }
+            }, function (err) {
+                if (err) {
+                    return notificationArea.error("Es ist ein Fehler aufgetreten.", true);
+                }
+    
+                
+                notificationArea.success("Wert gespeichert.");
+                template.selectedBundle.set();
+                template.$('.modal').modal('hide');
+            });
         });
+
+        
 
     },
     'hidden.bs.modal #newLevel': function (event, template) {
@@ -380,4 +405,8 @@ function getMeasurementsForLocation(bundle, location) {
         .sort((a, b) => moment(b.date) - moment(a.date));
 
     return measurements;
+}
+
+function getAligning(minValue){
+    return minValue + 22
 }

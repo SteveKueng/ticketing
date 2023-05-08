@@ -1,5 +1,5 @@
 <template name="bundleDetail">
-    <div class="bundle-detail col-xs-10 col-xs-offset-1">
+    <div class="bundle-detail">
         {{>backButton}}
         <div class="row">
             <div class="col-xs-12">
@@ -17,7 +17,19 @@
             </div>
             <div class="col-xs-12 col-sm-6">
                 <div class="col-xs-6 info-row">Max. Kanaldämpfung:</div>
-                <div class="col-xs-6 info-text">{{bundle.minValue}} dB</div>
+                <div class="col-xs-6 info-text">{{bundle.minValue}}dB</div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="col-xs-6 info-row">Aligning:</div>
+                <div class="col-xs-6 info-text">{{getAligning bundle.minValue}}dB</div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="col-xs-6 info-row">Aligning {{getDirectionName 'AtoB'}}:</div>
+                <div class="col-xs-6 info-text bg-warning text-warning">{{getLatestDamping bundle 'AtoB'}}dB (TX: {{getLatestMasurementForLocation bundle bundle.locationA 'txValue'}}dBm / RX: {{getLatestMasurementForLocation bundle bundle.locationA 'rxValue'}}dBm)</div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="col-xs-6 info-row">Aligning {{getDirectionName 'BtoA'}}:</div>
+                <div class="col-xs-6 info-text">{{getLatestDamping bundle 'BtoA'}}dB  (TX: {{getLatestMasurementForLocation bundle bundle.locationB 'txValue'}}dBm / RX: {{getLatestMasurementForLocation bundle bundle.locationB 'rxValue'}}dBm)</div>
             </div>
         </div>
         <div class="row">
@@ -27,13 +39,12 @@
         </div>
         <div class="row level-table">
             <div class="col-xs-12 col-sm-6">
-                <h4>Kanaldämpfung {{getDirectionName 'AtoB'}}</h4>
-                <table class="table">
+                <h4>Aligning {{getDirectionName 'AtoB'}}</h4>
+                <table class="table table-striped table-condensed">
                     <thead>
                         <tr>
                             <th>Wert</th>
                             <th>Meldedatum</th>
-                            <th><th>Abweichung der Meldungen</th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,20 +52,18 @@
                         <tr>
                             <td>{{AtoBDamping}} dB</td>
                             <td>{{getAverageDate dateA dateB}}</td>
-                            <td>{{getDeltaHours dateA dateB}} h</td>
                         </tr>
                         {{/each}}
                     </tbody>
                 </table>
             </div>
             <div class="col-xs-12 col-sm-6">
-                <h4>Kanaldämpfung {{getDirectionName 'BtoA'}}</h4>
-                <table class="table">
+                <h4>Aligning {{getDirectionName 'BtoA'}}</h4>
+                <table class="table table-striped table-condensed">
                     <thead>
                         <tr>
                             <th>Wert</th>
                             <th>Meldedatum</th>
-                            <th>Abweichung der Meldungen</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,7 +71,6 @@
                         <tr>
                             <td>{{BtoADamping}} dB</td>
                             <td>{{getAverageDate dateA dateB}}</td>
-                            <td>{{getDeltaHours dateA dateB}} h</td>
                         </tr>
                         {{/each}}
                     </tbody>
@@ -70,7 +78,7 @@
             </div>
             <div class="col-xs-12 col-sm-6">
                     <h4>TX/RX Werte {{bundle.locationA}}</h4>
-                    <table class="table">
+                    <table class="table table-striped table-condensed">
                         <thead>
                             <tr>
                                 <th>Wert</th>
@@ -81,7 +89,7 @@
                         <tbody>
                            {{#each getMeasurementsForLocation bundle bundle.locationA}}
                             <tr>
-                                <td>TX: {{txValue}} dBm / RX: {{rxValue}} dBm</td>
+                                <td>TX: {{txValue}}dBm / RX: {{rxValue}}dBm</td>
                                 <td>{{formatDate date}}</td>
                                 <td><i class="glyphicon glyphicon-remove delete" data-measurement-id="{{id}}" data-toggle="modal" data-target="#confirm-delete"></i></td>
         
@@ -92,7 +100,7 @@
             </div>
             <div class="col-xs-12 col-sm-6">
                     <h4>TX/RX Werte {{bundle.locationB}}</h4>
-                    <table class="table">
+                    <table class="table table-striped table-condensed">
                         <thead>
                             <tr>
                                 <th>Wert</th>
@@ -103,7 +111,7 @@
                         <tbody>
                            {{#each getMeasurementsForLocation bundle bundle.locationB}}
                             <tr>
-                                <td>TX: {{txValue}} dBm / RX: {{rxValue}} dBm</td>
+                                <td>TX: {{txValue}}dBm / RX: {{rxValue}}dBm</td>
                                 <td>{{formatDate date}}</td>
                                 <td><i class="glyphicon glyphicon-remove delete" data-measurement-id="{{id}}" data-toggle="modal" data-target="#confirm-delete"></i></td>
                             </tr>

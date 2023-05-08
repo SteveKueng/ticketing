@@ -1,77 +1,77 @@
 <template name="bundleList">
     <div class="row bundle-list">
         <div>
-            <table class="table">
+            <table class="table table-bordered table-condensed">
                 <thead>
                     <tr>
                         <th data-sort="name"><span class="{{getSortClass 'name'}}">Bündel</span></th>
                         <th data-sort="status"><span class="{{getSortClass 'status'}}">Status</span></th>
                         <th data-sort="deltaShf"><span class="{{getSortClass 'deltaShf'}}">SHF (+/-)</span></th>
                         <th data-sort="deltaTbz"><span class="{{getSortClass 'deltaTbz'}}">TBZ (+/-)</span></th>
-                        <th>Max Kanaldämpfung</th>
+                        <th>Aligning</th>
                         <th>Kanaldämpfung hin/zurück</th>
                     </tr>
                 </thead>
-                {{#each bundles}} {{>bundleRow this}} {{/each}}
+                <tbody>
+                    {{#each bundles}} {{>bundleRow this}} {{/each}}
+                </tbody>
             </table>
         </div>
     </div>
 </template>
 
 <template name="bundleRow">
-    <tbody>
-        {{#with getLatestDamping this 'AtoB'}}
-        <tr>
-            <td rowspan="2"><a href="#" class="e-link">{{../name}}</a></td>
-            {{#with getActiveEstablishment ..}}
-                <td rowspan="2">
-                    <td><i class="glyphicon glyphicon-pencil btn-link" data-id="{{../../_id}}" data-toggle="modal" data-target="#editBundleStatus"></i>                    {{getBundleStatus this}}</td>
-                </td>
-                <td rowspan="2">
-                    {{getDeltabox shf.timestamp shf.deadline shf.comment "" "SHF"}}
-                </td>
-                <td rowspan="2">
-                    {{getDeltabox tbz.timestamp tbz.deadline tbz.comment "" "TBZ"}}
-                </td>
-            {{else}}
-                <td rowspan="2"><i class="glyphicon glyphicon-time"></i> Deadlines konfigurieren.</td>
-                <td rowspan="2">-</td>
-                <td rowspan="2">-</td>
-            {{/with}}
-            <td rowspan="2">{{../minValue}} dB</td>
-            <td class="{{isLate .. direction}}">{{getDirection .. 'AtoB'}} [{{.}} dB]</td>
-        </tr>
+    {{#with getLatestDamping this 'AtoB'}}
+    <tr>
+        <td rowspan="2"><a href="#" class="e-link">{{../name}}</a></td>
+        {{#with getActiveEstablishment ..}}
+            <td rowspan="2">
+                <td><i class="glyphicon glyphicon-pencil btn-link" data-id="{{../../_id}}" data-toggle="modal" data-target="#editBundleStatus"></i>                    {{getBundleStatus this}}</td>
+            </td>
+            <td rowspan="2">
+                {{getDeltabox shf.timestamp shf.deadline shf.comment "" "SHF"}}
+            </td>
+            <td rowspan="2">
+                {{getDeltabox tbz.timestamp tbz.deadline tbz.comment "" "TBZ"}}
+            </td>
         {{else}}
-        <tr>
-            <td rowspan="2">{{../name}}</td>
-            {{#with getActiveEstablishment ..}}
-                <td rowspan="2">
-                    <td><i class="glyphicon glyphicon-pencil btn-link" data-id="{{../../_id}}" data-toggle="modal" data-target="#editBundleStatus"></i>{{getBundleStatus this}}</td>
-                </td>
-                <td rowspan="2">
-                    {{getDeltabox shf.timestamp shf.deadline shf.comment "" "SHF"}}
-                </td>
-                <td rowspan="2">
-                    {{getDeltabox tbz.timestamp tbz.deadline tbz.comment "" "TBZ"}}
-                </td>
-            {{else}}
-                <td rowspan="2"><i class="glyphicon glyphicon-time"></i> Deadlines konfigurieren.</td>
-                <td rowspan="2">-</td>
-                <td rowspan="2">-</td>
-            {{/with}}
-            <td rowspan="2">{{../minValue}}</td>
-            <td class="danger">{{getDirection .. direction}} [k.A.]</td>
-        </tr>
-        {{/with}} {{#with getLatestDamping this 'BtoA'}}
-        <tr>
-            <td class="{{isLate .. direction}}">{{getDirection .. 'BtoA'}} [{{.}} dB]</td>
-        </tr>
-        {{else}}
-        <tr>
-            <td class="danger"></td>
-        </tr>
+            <td rowspan="2"><i class="glyphicon glyphicon-time"></i> Deadlines konfigurieren.</td>
+            <td rowspan="2">-</td>
+            <td rowspan="2">-</td>
         {{/with}}
-    </tbody>
+        <td rowspan="2">{{getAligning ../minValue}} dB</td>
+        <td class="{{isLate .. direction}}">{{getDirection .. 'AtoB'}} [{{.}} dB]</td>
+    </tr>
+    {{else}}
+    <tr>
+        <td rowspan="2">{{../name}}</td>
+        {{#with getActiveEstablishment ..}}
+            <td rowspan="2">
+                <td><i class="glyphicon glyphicon-pencil btn-link" data-id="{{../../_id}}" data-toggle="modal" data-target="#editBundleStatus"></i>{{getBundleStatus this}}</td>
+            </td>
+            <td rowspan="2">
+                {{getDeltabox shf.timestamp shf.deadline shf.comment "" "SHF"}}
+            </td>
+            <td rowspan="2">
+                {{getDeltabox tbz.timestamp tbz.deadline tbz.comment "" "TBZ"}}
+            </td>
+        {{else}}
+            <td rowspan="2"><i class="glyphicon glyphicon-time"></i> Deadlines konfigurieren.</td>
+            <td rowspan="2">-</td>
+            <td rowspan="2">-</td>
+        {{/with}}
+        <td rowspan="2">{{getAligning ../minValue}} dB</td>
+        <td class="info">{{getDirection .. direction}} [k.A.]</td>
+    </tr>
+    {{/with}} {{#with getLatestDamping this 'BtoA'}}
+    <tr>
+        <td class="{{isLate .. direction}}">{{getDirection .. 'BtoA'}} [{{.}} dB]</td>
+    </tr>
+    {{else}}
+    <tr>
+        <td class="info"></td>
+    </tr>
+    {{/with}}
 </template>
 
 <template name="editBundleStatus">
@@ -184,26 +184,6 @@
                         </div>
                         {{#if selectedBundle}}
                         <div class="form-group">
-                            <label class="control-label col-xs-4">Standort</label>
-                            <div class="col-xs-8">
-
-                                <div class="radio">
-                                    <label>
-                                        <input id="locationA" type="radio" name="location" value="A">
-                                        {{selectedBundle.locationA}}
-                                        
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input id="locationB" type="radio" name="location" value="B">
-                                        {{selectedBundle.locationB}}
-                                    </label>
-                                </div>
-                         
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="bundleDate" class="control-label col-xs-4">Meldungszeitpunkt</label>
                             <div class="col-xs-8">
                                 <div class="input-group datetimepicker">
@@ -214,25 +194,49 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="txValue" class="control-label col-xs-4">TX-Wert</label>
+                            <label for="rxValueA" class="control-label col-xs-4">RX-Wert - {{selectedBundle.locationA}}</label>
+
+                            <div class="col-xs-8">
+                                <div class="input-group">
+                                  
+                                    <input type="number" step="any" min="-99" max="22" class="form-control" id="rxValueA" required>
+                                    <span class="input-group-addon">dBm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txValueA" class="control-label col-xs-4">TX-Wert - {{selectedBundle.locationA}}</label>
 
                             <div class="col-xs-8">
                                 <div class="input-group">
                                     
-                                    <input type="number" min="-99" max="22" step="any"  class="form-control" id="txValue" required />
+                                    <input type="number" min="-99" max="22" step="any" class="form-control" id="txValueA" required />
                                     <span class="input-group-addon">dBm</span> 
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="rxValue" class="control-label col-xs-4">RX-Wert</label>
+                            <label for="rxValueB" class="control-label col-xs-4">RX-Wert - {{selectedBundle.locationB}}</label>
 
                             <div class="col-xs-8">
                                 <div class="input-group">
                                   
-                                    <input type="number" step="any" min="-99" max="22" class="form-control" id="rxValue" required>
+                                    <input type="number" step="any" min="-99" max="22" class="form-control" id="rxValueB" required>
                                     <span class="input-group-addon">dBm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txValueB" class="control-label col-xs-4">TX-Wert - {{selectedBundle.locationB}}</label>
+
+                            <div class="col-xs-8">
+                                <div class="input-group">
+                                    
+                                    <input type="number" min="-99" max="22" step="any" class="form-control" id="txValueB" required />
+                                    <span class="input-group-addon">dBm</span> 
                                 </div>
                             </div>
                         </div>
